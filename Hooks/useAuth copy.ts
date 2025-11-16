@@ -1,0 +1,76 @@
+import { useMutation } from '@tanstack/react-query'
+import { type LoginFormData, type RegisterFormData } from '@/schemas/auth.schema'
+import { authLogin, authRegister, resetPassword, sendResetPassword } from '@/services/auth.service'
+import { type AuthSucessResponse, type AuthErrorResponse } from '@/interfaces/auth.interface'
+
+interface UseAuthRegisterProps {
+  onSuccess?: (data: AuthSucessResponse) => void
+  onError?: (error: unknown) => void
+}
+export const useAuthRegister = ({ onSuccess, onError }: UseAuthRegisterProps) => {
+  return useMutation<AuthSucessResponse, AuthErrorResponse, RegisterFormData>({
+    mutationFn: async (data) => authRegister(data),
+    onSuccess: (data) => {
+      if (onSuccess) onSuccess(data)
+    },
+    onError: (error) => {
+      if (onError) onError(error)
+    }
+  })
+}
+
+interface UseAuthLoginProps {
+  onSuccess?: (data: AuthSucessResponse) => void
+  onError?: (error: unknown) => void
+}
+export const useAuthLogin = ({ onSuccess, onError }: UseAuthLoginProps) => {
+  return useMutation<AuthSucessResponse, AuthErrorResponse, LoginFormData>({
+    mutationFn: async (data) => authLogin(data),
+    onSuccess: (data) => {
+      if (onSuccess) onSuccess(data)
+    },
+    onError: (error) => {
+      if (onError) onError(error)
+    }
+  })
+}
+
+interface UseResetPasword {
+  onSuccess?: (data: UseResetPaswordResponse) => void
+  onError?: (error: UseResetPaswordResponse) => void
+}
+type UseResetPaswordResponse = {
+  success: boolean
+  payload?: unknown
+}
+
+type ResetPaswordFormData = {
+  email: string
+}
+export const useResetPaswordEmail = ({ onSuccess, onError }: UseResetPasword) => {
+  return useMutation<UseResetPaswordResponse, UseResetPaswordResponse, ResetPaswordFormData>({
+    mutationFn: async (data) => resetPassword(data),
+    onSuccess: (data) => {
+      if (onSuccess) onSuccess(data)
+    },
+    onError: (error) => {
+      if (onError) onError(error)
+    }
+  })
+}
+
+export const useResetPasword = ({ onSuccess, onError }: UseResetPasword) => {
+  return useMutation<
+    UseResetPaswordResponse,
+    UseResetPaswordResponse,
+    { token: string; password: string; newPassword: string }
+  >({
+    mutationFn: async (data) => sendResetPassword(data),
+    onSuccess: (data) => {
+      if (onSuccess) onSuccess(data)
+    },
+    onError: (error) => {
+      if (onError) onError(error)
+    }
+  })
+}
